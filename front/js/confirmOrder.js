@@ -1,5 +1,6 @@
 const orderForm = document.getElementsByClassName("cart__order__form")
-orderForm[0].addEventListener("submit", function (event) {
+if (orderForm.length > 0) {
+ orderForm[0].addEventListener("submit", async function (event) {
   event.preventDefault();
   let firstName = document.getElementById("firstName").value.trim();
     let lastName = document.getElementById("lastName").value.trim();
@@ -9,16 +10,20 @@ orderForm[0].addEventListener("submit", function (event) {
 
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  //   let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  //   if (!emailRegex.test(email)) {
-  //     displayErrorMessage("emailErrorMsg", "Invalid email format.");
-  //     return;
-  //   }
+    let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      displayErrorMessage("emailErrorMsg", "Invalid email format.");
+      return;
+    }
 
-  //   if (!firstName || !lastName || !address || !city || !email) {
-  //     displayErrorMessage("emailErrorMsg", "All fields are required.");
-  //     return;
-  // }
+    if (!firstName || !lastName || !address || !city || !email) {
+      displayErrorMessage("emailErrorMsg", "All fields are required.");
+      return;
+  }
+  
+  if (!firstName){
+    displayErrorMessage("","")
+  } 
 
     let contact = {
       firstName: firstName,
@@ -60,7 +65,9 @@ orderForm[0].addEventListener("submit", function (event) {
     };
 
     debugger
-    fetch("http://localhost:3000/api/products/order", options)
+
+    console.log('Data sent to the server: ' , data);
+    await fetch("http://localhost:3000/api/products/order", options)
     .then(response => {
       debugger
         if (!response.ok) {
@@ -75,3 +82,4 @@ orderForm[0].addEventListener("submit", function (event) {
         console.error("Error:", error);
     });
   });
+}
