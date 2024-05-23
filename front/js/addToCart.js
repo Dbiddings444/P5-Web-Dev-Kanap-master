@@ -25,16 +25,16 @@ const addToCart = () => {
   const product_id = product._id;
   const product_color = document.getElementById("colors").value;
   const product_quantity = parseInt(document.getElementById("quantity").value);
-  if (product_color == "--Please, select a color --") {
-    return console.error("You need to select a color to add item to cart");
+  if (product_color == "") {
+    return alert("You need to select a color to add item to cart");
   }
   if (product_quantity <= 0) {
-    return console.error(
+    return alert(
       "Your quantity needs to be more than zero to add item to cart"
     );
   }
   if (product_quantity > 100) {
-    return console.error("Your product quantity cannot exceed 100");
+    return alert("Your product quantity cannot exceed 100");
   }
  
     let existingItemIndex = cart.findIndex(

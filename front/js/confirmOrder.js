@@ -21,9 +21,9 @@ if (orderForm.length > 0) {
       return;
   }
   
-  if (!firstName){
-    displayErrorMessage("","")
-  } 
+  // if (!firstName){
+  //   displayErrorMessage("","")
+  // } 
 
     let contact = {
       firstName: firstName,
@@ -54,7 +54,7 @@ if (orderForm.length > 0) {
     let items = createItemsArray(cart);
     let data = {
       contact: contact,
-      productTable: items,
+      products: items,
     };
     let options = {
       method: "POST",
