@@ -1,8 +1,8 @@
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 
-function removeFromCart(itemId) {
-  const newCart = cart.filter((item) => item.id !== itemId);
+function removeFromCart(itemColor, itemId) {
+  const newCart = cart.filter((item) => item.color !== itemColor && item.id !==itemId);
   localStorage.setItem("cart", JSON.stringify(newCart));
   cart = newCart;
 }
@@ -22,6 +22,8 @@ const displayCart = () => {
   let totalQuantity = 0 ;
   const cartTotal = document.getElementById("totalPrice")
   const cartQuantity = document.getElementById("totalQuantity")
+
+
   // Display the cart on the cart page
   cart.forEach((product) => {
     // Create elements for each item
@@ -40,9 +42,9 @@ const displayCart = () => {
         if (!isNaN(item.price)) {
           totalPrice += parseFloat(item.price) * quantity;
         }
-        if (!isNaN(quantity)) {
-            totalQuantity += quantity;
-          }
+        // if (!isNaN(quantity)) {
+        //     totalQuantity += quantity;
+        //   }
         Cartitem.innerHTML += `
         <article class="cart__item" data-id=${product.id} data-color=${color}>
         <div class="cart__item__img">
@@ -65,15 +67,14 @@ const displayCart = () => {
           </div>
         </div>
       </article> `;
-      cartTotal.innerHTML=totalPrice;
-      cartQuantity.innerHTML=totalQuantity;
 })
       .catch((error) => {
         console.error("Error fetching products: ", error);
       });
 
  });
-
+ cartTotal.innerHTML=totalPrice;
+ cartQuantity.innerHTML=totalQuantity;
 };
 displayCart();
 
@@ -87,7 +88,9 @@ cartItemsContainer.addEventListener("change", function(event) {
 });
 cartItemsContainer.addEventListener("click", function(event) {
   if (event.target.classList.contains("deleteItem")) {
-      const itemId = event.target.closest(".cart__item").dataset.id;
-      removeFromCart(itemId);
+      const itemColor = event.target.closest(".cart__item").dataset.color;
+      const itemId = event.target.closest(".cart__item").dataset.ic;
+      event.target.closest(".cart__item").remove();
+      removeFromCart(itemColor, itemId);
   }
 });
