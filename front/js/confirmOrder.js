@@ -8,6 +8,7 @@ if (orderForm.length > 0) {
     let city = document.getElementById("city").value.trim();
     let email = document.getElementById("email").value.trim();
 
+
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -16,8 +17,28 @@ if (orderForm.length > 0) {
       return;
     }
 
-    if (!firstName || !lastName || !address || !city || !email) {
-      displayErrorMessage("emailErrorMsg", "All fields are required.");
+    if(!firstName )
+    {
+      displayErrorMessage("firstNameErrorMsg", "First name is required.");
+      return;
+    }
+    if(!lastName )
+    {
+      displayErrorMessage("lastNameErrorMsg", "Last name is required.");
+      return;
+    }
+    if(!address )
+    {
+      displayErrorMessage("addressErrorMsg", "Address is required.");
+      return;
+    }
+    if(!city )
+    {
+      displayErrorMessage("cityErrorMsg", "City is required.");
+      return;
+    }
+    if (!email) {
+      displayErrorMessage("emailErrorMsg", "Email is required.");
       return;
   }
   
@@ -64,12 +85,11 @@ if (orderForm.length > 0) {
       body: JSON.stringify(data),
     };
 
-    debugger
 
     console.log('Data sent to the server: ' , data);
     await fetch("http://localhost:3000/api/products/order", options)
     .then(response => {
-      debugger
+
         if (!response.ok) {
             throw new Error("Network response was not okay");
         }
@@ -77,6 +97,9 @@ if (orderForm.length > 0) {
     })
     .then(data => {
         console.log("POST request successful:", data);
+        // confirmId.innerHTML(data.orderId);
+        console.log(data.orderId);
+        window.location.href = './confirmation.html?orderId=' + data.orderId;
     })
     .catch(error => {
         console.error("Error:", error);

@@ -1,15 +1,23 @@
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-
 function removeFromCart(itemColor, itemId) {
-  const newCart = cart.filter((item) => item.color !== itemColor && item.id !==itemId);
-  localStorage.setItem("cart", JSON.stringify(newCart));
-  cart = newCart;
+  const itemIndex = cart.findIndex(
+    (item) => item.id === itemId && item.color === itemColor
+  ); // finding index of item being changed
+  if (itemIndex >= 0 && itemIndex < cart.length) {
+    cart.splice(itemIndex, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    console.log("Item removed successfully");
+  } else {
+    console.log("Invalid index");
+  }
 }
 
-function updateQuantity(itemId, newQuantity) {
-  const itemIndex = cart.findIndex((item) => item.id === itemId); // finding index of item being changed
-  if (itemIndex !== -1) { 
+function updateQuantity(itemId, itemColor, newQuantity) {
+  const itemIndex = cart.findIndex(
+    (item) => item.id === itemId && item.color === itemColor
+  ); // finding index of item being changed
+  if (itemIndex !== -1) {
     cart[itemIndex].quantity = parseInt(newQuantity);
     localStorage.setItem("cart", JSON.stringify(cart));
     console.log("Quantity has been successfully updated!");
@@ -19,10 +27,11 @@ function updateQuantity(itemId, newQuantity) {
 const displayCart = () => {
   // Collect the cart from LocalStorage
   let totalPrice = 0;
-  let totalQuantity = 0 ;
-  const cartTotal = document.getElementById("totalPrice")
-  const cartQuantity = document.getElementById("totalQuantity")
 
+  const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const cartTotal = document.getElementById("totalPrice");
+  const cartQuantity = document.getElementById("totalQuantity");
 
   // Display the cart on the cart page
   cart.forEach((product) => {
@@ -38,13 +47,11 @@ const displayCart = () => {
         return response.json();
       })
       .then((item) => {
-        // Ensure item.price is a number before adding it to totalPrice
         if (!isNaN(item.price)) {
           totalPrice += parseFloat(item.price) * quantity;
+          console.log(totalPrice);
         }
-        // if (!isNaN(quantity)) {
-        //     totalQuantity += quantity;
-        //   }
+
         Cartitem.innerHTML += `
         <article class="cart__item" data-id=${product.id} data-color=${color}>
         <div class="cart__item__img">
@@ -67,30 +74,31 @@ const displayCart = () => {
           </div>
         </div>
       </article> `;
-})
+
+        cartTotal.innerHTML = totalPrice;
+        cartQuantity.innerHTML = totalQuantity;
+      })
       .catch((error) => {
         console.error("Error fetching products: ", error);
       });
-
- });
- cartTotal.innerHTML=totalPrice;
- cartQuantity.innerHTML=totalQuantity;
+  });
 };
 displayCart();
 
 const cartItemsContainer = document.getElementById("cart__items");
-cartItemsContainer.addEventListener("change", function(event) {
-    if (event.target.classList.contains("itemQuantity")) {
-        const itemId = event.target.closest(".cart__item").dataset.id;
-        const newQuantity = event.target.value;
-        updateQuantity(itemId, newQuantity);
-    }
+cartItemsContainer.addEventListener("change", function (event) {
+  if (event.target.classList.contains("itemQuantity")) {
+    const itemId = event.target.closest(".cart__item").dataset.id;
+    const itemColor = event.target.closest(".cart__item").dataset.color;
+    const newQuantity = event.target.value;
+    updateQuantity(itemId, itemColor, newQuantity);
+  }
 });
-cartItemsContainer.addEventListener("click", function(event) {
+cartItemsContainer.addEventListener("click", function (event) {
   if (event.target.classList.contains("deleteItem")) {
-      const itemColor = event.target.closest(".cart__item").dataset.color;
-      const itemId = event.target.closest(".cart__item").dataset.ic;
-      event.target.closest(".cart__item").remove();
-      removeFromCart(itemColor, itemId);
+    const itemColor = event.target.closest(".cart__item").dataset.color;
+    const itemId = event.target.closest(".cart__item").dataset.id;
+    event.target.closest(".cart__item").remove();
+    removeFromCart(itemColor, itemId);
   }
 });
